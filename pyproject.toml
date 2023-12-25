@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "fastapi-crud-admin"
+version = "0.1.0"
+description = ""
+authors = ["Minsoo <als95.dev@gmail.com>"]
+readme = "README.md"
+packages = [{include = "fastapi_crud_admin"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+taskipy = "^1.12.2"
+fastapi = "^0.95.1"
+sqlalchemy = "^1.4.46"
+
+[tool.taskipy.tasks]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
