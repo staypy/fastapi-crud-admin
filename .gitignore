@@ -5,3 +5,5 @@ venv
 *.pot
 *.pyc
 poetry.lock
+
+test.db
