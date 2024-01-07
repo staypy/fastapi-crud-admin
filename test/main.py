@@ -17,6 +17,7 @@ def create_app() -> FastAPI:
     """ Define Admin """
     register(
         app=_app,
+        db_url="sqlite+aiosqlite:///./test.db",
         models=[Example]
     )
 

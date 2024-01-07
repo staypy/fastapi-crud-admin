@@ -1,13 +1,14 @@
-from typing import List
+from typing import Dict
 
 from sqlalchemy import Column, Table
+from sqlalchemy.orm import DeclarativeMeta
 
 
 class TableMeta:
     def __init__(
             self,
             table: Table,
-            columns: List[Column]
+            columns: Dict[str, Column]
     ):
         self.table = table
         self.columns = columns
@@ -16,6 +17,8 @@ class TableMeta:
 class AdminMeta:
     def __init__(
             self,
-            tables: List[TableMeta]
+            classes: Dict[str, DeclarativeMeta],
+            tables: Dict[str, TableMeta]
     ):
+        self.classes = classes
         self.tables = tables
