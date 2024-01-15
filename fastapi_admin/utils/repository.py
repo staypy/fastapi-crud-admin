@@ -1,7 +1,6 @@
-from typing import TypeVar, Generic, List
-
-from sqlalchemy import select
+from sqlalchemy import select, delete, and_
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import DeclarativeMeta
 
 
 class Repository:
@@ -13,11 +12,19 @@ class Repository:
     @staticmethod
     async def save(session: AsyncSession, entity):
         session.add(entity)
-        await session.merge(entity)
+        result = await session.merge(entity)
         await session.commit()
-        return entity
+        return result
 
     @staticmethod
-    async def delete(session: AsyncSession, entity):
-        await session.delete(entity)
+    async def delete(session: AsyncSession, table_meta: DeclarativeMeta, columns: dict):
+        query = delete(table_meta)
+
+        where_list = []
+        for key, value in columns.items():
+            where_list.append(key == value)
+
+        query = query.where(and_(*where_list))
+
+        await session.execute(query)
         await session.commit()

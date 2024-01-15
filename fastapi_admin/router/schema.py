@@ -21,7 +21,7 @@ class SchemaRouter(Router):
             finally:
                 await session.close()
 
-    @router.post('/{table_name}')
+    @router.post('/{table_name}/create')
     async def create_row(self, table_name: str):
         async with self.database.async_session_maker() as session:
             try:
@@ -32,8 +32,8 @@ class SchemaRouter(Router):
             finally:
                 await session.close()
 
-    @router.put('/{table_name}/{row_id}')
-    async def update_row(self, table_name: str, row_id):
+    @router.post('/{table_name}/update')
+    async def update_row(self, table_name: str):
         async with self.database.async_session_maker() as session:
             try:
                 pass
@@ -43,14 +43,17 @@ class SchemaRouter(Router):
             finally:
                 await session.close()
 
-    @router.delete('/{table_name}/{row_id}')
-    async def delete_row(self, table_name: str, row_id):
+    @router.post('/{table_name}/delete')
+    async def delete_row(self, table_name: str, columns: dict):
         async with self.database.async_session_maker() as session:
             try:
-                pass
+                table_meta = self.meta.tables[table_name]
+                columns_for_query = {table_meta.columns[key]: value for key, value in columns.items()
+                                     if value is not None}
+
+                await Repository.delete(session, self.meta.classes[table_name], columns_for_query)
             except Exception as e:
                 await session.rollback()
                 raise e
             finally:
                 await session.close()
-
