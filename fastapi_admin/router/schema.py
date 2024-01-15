@@ -22,10 +22,15 @@ class SchemaRouter(Router):
                 await session.close()
 
     @router.post('/{table_name}/create')
-    async def create_row(self, table_name: str):
+    async def create_row(self, table_name: str, columns: dict):
         async with self.database.async_session_maker() as session:
             try:
-                pass
+                table_meta = self.meta.tables[table_name]
+                for key, value in columns.items():
+                    if table_meta.columns.get(key) is None:
+                        raise Exception(f"column {key} is not exist in table {table_name}")
+
+                return await Repository.save(session, self.meta.classes[table_name], columns)
             except Exception as e:
                 await session.rollback()
                 raise e

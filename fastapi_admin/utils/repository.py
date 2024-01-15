@@ -1,4 +1,4 @@
-from sqlalchemy import select, delete, and_
+from sqlalchemy import select, delete, and_, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
@@ -10,11 +10,9 @@ class Repository:
         return result.scalars().all()
 
     @staticmethod
-    async def save(session: AsyncSession, entity):
-        session.add(entity)
-        result = await session.merge(entity)
+    async def save(session: AsyncSession, table_meta: DeclarativeMeta, columns: dict):
+        await session.execute(insert(table_meta).values(**columns))
         await session.commit()
-        return result
 
     @staticmethod
     async def delete(session: AsyncSession, table_meta: DeclarativeMeta, columns: dict):
