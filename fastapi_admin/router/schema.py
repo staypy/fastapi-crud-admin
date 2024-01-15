@@ -38,10 +38,14 @@ class SchemaRouter(Router):
                 await session.close()
 
     @router.post('/{table_name}/update')
-    async def update_row(self, table_name: str):
+    async def update_row(self, table_name: str, pks: dict, columns: dict):
         async with self.database.async_session_maker() as session:
             try:
-                pass
+                table_meta = self.meta.tables[table_name]
+                columns_for_query = {table_meta.columns[key]: value for key, value in pks.items()
+                                     if value is not None}
+
+                await Repository.update(session, self.meta.classes[table_name], columns_for_query, columns)
             except Exception as e:
                 await session.rollback()
                 raise e

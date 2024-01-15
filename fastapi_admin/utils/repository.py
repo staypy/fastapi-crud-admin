@@ -1,4 +1,4 @@
-from sqlalchemy import select, delete, and_, insert
+from sqlalchemy import select, delete, and_, insert, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
@@ -15,14 +15,19 @@ class Repository:
         await session.commit()
 
     @staticmethod
-    async def delete(session: AsyncSession, table_meta: DeclarativeMeta, columns: dict):
-        query = delete(table_meta)
-
+    async def update(session: AsyncSession, table_meta: DeclarativeMeta, pks: dict, columns: dict):
         where_list = []
-        for key, value in columns.items():
+        for key, value in pks.items():
             where_list.append(key == value)
 
-        query = query.where(and_(*where_list))
+        await session.execute(update(table_meta).where(and_(*where_list)).values(**columns))
+        await session.commit()
 
-        await session.execute(query)
+    @staticmethod
+    async def delete(session: AsyncSession, table_meta: DeclarativeMeta, pks: dict):
+        where_list = []
+        for key, value in pks.items():
+            where_list.append(key == value)
+
+        await session.execute(delete(table_meta).where(and_(*where_list)))
         await session.commit()
