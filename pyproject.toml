@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-crud-admin"
-version = "0.1.0"
+version = "0.0.1"
 description = ""
 authors = ["Minsoo <als95.dev@gmail.com>"]
 readme = "README.md"
@@ -19,7 +19,8 @@ greenlet = "^3.0.3"
 nest-asyncio = "^1.5.8"
 
 [tool.taskipy.tasks]
-test = "uvicorn test.main:app --reload"
+test = "python3 -m pytest test"
+test_app = "uvicorn test.main:app --reload"
 
 [build-system]
 requires = ["poetry-core"]
