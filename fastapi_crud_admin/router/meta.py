@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from fastapi_admin.meta import AdminMeta
-from fastapi_admin.utils.router import Router
+from fastapi_crud_admin.meta import AdminMeta
+from fastapi_crud_admin.utils.router import Router
 
 router = APIRouter(prefix='/meta')
 

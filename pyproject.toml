@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Minsoo <als95.dev@gmail.com>"]
 readme = "README.md"
-packages = [{include = "fastapi_admin"}]
+packages = [{include = "fastapi_crud_admin"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"

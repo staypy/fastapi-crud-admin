@@ -3,10 +3,10 @@ from typing import List, Any
 from fastapi import FastAPI
 from sqlalchemy.orm import DeclarativeMeta
 
-from fastapi_admin.meta import TableMeta, AdminMeta
-from fastapi_admin.router.meta import MetaRouter
-from fastapi_admin.router.schema import SchemaRouter
-from fastapi_admin.utils.database import Database
+from fastapi_crud_admin.meta import TableMeta, AdminMeta
+from fastapi_crud_admin.router.meta import MetaRouter
+from fastapi_crud_admin.router.schema import SchemaRouter
+from fastapi_crud_admin.utils.database import Database
 
 
 def register(

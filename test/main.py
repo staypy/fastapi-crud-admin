@@ -4,7 +4,7 @@ import nest_asyncio
 import uvicorn
 from fastapi import FastAPI
 
-from fastapi_admin.admin import register
+from fastapi_crud_admin.admin import register
 from test.example.config import db
 from test.example.schema import Example
 
