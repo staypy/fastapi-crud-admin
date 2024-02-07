@@ -8,9 +8,11 @@ packages = [{include = "fastapi_crud_admin"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-taskipy = "^1.12.2"
 fastapi = "^0.95.1"
 sqlalchemy = "^1.4.46"
+
+[tool.poetry.dev-dependencies]
+taskipy = "^1.12.2"
 pytest = "^7.4.4"
 aiosqlite = "^0.19.0"
 uvicorn = "^0.25.0"
