@@ -10,6 +10,7 @@ packages = [{include = "fastapi_crud_admin"}]
 python = "^3.8"
 fastapi = "^0.95.1"
 sqlalchemy = "^1.4.46"
+fastapi-pagination = "^0.12.15"
 
 [tool.poetry.dev-dependencies]
 taskipy = "^1.12.2"

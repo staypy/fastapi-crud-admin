@@ -1,6 +1,7 @@
 from typing import List, Any, Callable, Optional
 
 from fastapi import FastAPI
+from fastapi_pagination import add_pagination
 from sqlalchemy.orm import DeclarativeMeta
 from starlette.responses import Response
 
@@ -45,6 +46,8 @@ class FastAPIAdmin:
                 columns={column.name: column for column in model.__table__.columns}
             ) for model in models
         }
+
+        add_pagination(self.app)
 
         self.meta = AdminMeta(tables=tables)
 

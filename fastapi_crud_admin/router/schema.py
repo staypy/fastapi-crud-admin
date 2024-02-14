@@ -1,11 +1,19 @@
 from fastapi import APIRouter, Request
+from fastapi_pagination import Params
+from pydantic import BaseModel
 
 from fastapi_crud_admin.meta import TableMeta
 from fastapi_crud_admin.utils.interceptor import api_interceptor
+from fastapi_crud_admin.utils.pagination import to_pagination
 from fastapi_crud_admin.utils.repository import Repository
 from fastapi_crud_admin.utils.router import Router
 
 router = APIRouter(prefix='/schema')
+
+
+class PaginationParams(BaseModel):
+    page: int = 1
+    size: int = 10
 
 
 class SchemaRouter(Router):
@@ -22,14 +30,16 @@ class SchemaRouter(Router):
 
     @router.post('/get')
     @api_interceptor
-    async def find_rows(self, _request: Request, queries: dict):
+    async def find_rows(self, _request: Request, queries: dict, params: PaginationParams):
         async with self.database.async_session_maker() as session:
             try:
                 table_meta = self.table_meta.table
                 columns_for_query = {table_meta.columns[key]: value for key, value in queries.items()
                                      if value is not None}
 
-                return await Repository.find_all(session, self.table_meta.entity, columns_for_query)
+                params = Params(page=params.page, size=params.size)
+
+                return await to_pagination(await Repository.find_all(session, self.table_meta.entity, columns_for_query, params))
             finally:
                 await session.close()
 
