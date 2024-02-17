@@ -10,12 +10,12 @@ packages = [{include = "fastapi_crud_admin"}]
 python = "^3.8"
 fastapi = "^0.95.1"
 sqlalchemy = "^1.4.46"
+aiosqlite = "^0.19.0"
 fastapi-pagination = "^0.12.15"
 
 [tool.poetry.dev-dependencies]
 taskipy = "^1.12.2"
 pytest = "^7.4.4"
-aiosqlite = "^0.19.0"
 uvicorn = "^0.25.0"
 asyncio = "^3.4.3"
 greenlet = "^3.0.3"

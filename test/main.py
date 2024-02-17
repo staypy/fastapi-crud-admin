@@ -38,6 +38,20 @@ def after_handler(response: Response) -> Response:
     return response
 
 
+def password_verifier(src: str, dest: str) -> bool:
+    """
+    Custom password verifier.
+
+    Parameters:
+    - src (str): Source password.
+    - dest (str): Destination password.
+
+    Returns:
+    - bool: True if the passwords match, False otherwise.
+    """
+    return src == dest
+
+
 def create_app() -> FastAPI:
     _app = FastAPI()
 
@@ -50,6 +64,7 @@ def create_app() -> FastAPI:
     admin.register_schema_meta(models=[Example, Test])
     admin.register_interceptor(table_name="tb_example", before_handler=before_handler, after_handler=after_handler)
     admin.register_schema_router()
+    admin.register_authentication(user_name="admin", password="admin", password_verifier=password_verifier)
 
     return _app
 

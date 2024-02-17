@@ -3,6 +3,8 @@ from typing import Dict
 from sqlalchemy import Column, Table
 from sqlalchemy.orm import DeclarativeMeta
 
+from fastapi_crud_admin.utils.auth import Authentication
+
 
 class TableMeta:
     def __init__(
@@ -21,6 +23,8 @@ class TableMeta:
 class AdminMeta:
     def __init__(
             self,
-            tables: Dict[str, TableMeta]
+            tables: Dict[str, TableMeta],
+            authentication: Authentication = None
     ):
         self.tables = tables
+        self.authentication = authentication

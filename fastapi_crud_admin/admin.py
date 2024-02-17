@@ -1,3 +1,4 @@
+import asyncio
 from typing import List, Any, Callable, Optional
 
 from fastapi import FastAPI
@@ -7,8 +8,10 @@ from starlette.responses import Response
 
 from fastapi_crud_admin.enum import HttpMethod
 from fastapi_crud_admin.meta import TableMeta, AdminMeta
+from fastapi_crud_admin.router.auth import AuthRouter
 from fastapi_crud_admin.router.meta import MetaRouter
 from fastapi_crud_admin.router.schema import SchemaRouter
+from fastapi_crud_admin.utils.auth import Authentication, auth_db
 from fastapi_crud_admin.utils.database import Database
 
 
@@ -81,3 +84,10 @@ class FastAPIAdmin:
                 SchemaRouter(table_name, table_meta, database).router,
                 prefix=f"{self.prefix}/{table_name}"
             )
+
+    def register_authentication(self, user_name: str, password: str, password_verifier: Callable[[str, str], bool]):
+        asyncio.run(auth_db.create_database())
+
+        self.meta.authentication = Authentication(user_name, password, password_verifier)
+
+        self.app.include_router(AuthRouter(self.meta.authentication).router, prefix=self.prefix)

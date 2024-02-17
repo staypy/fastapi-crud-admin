@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi_pagination import Params
 from pydantic import BaseModel
 
 from fastapi_crud_admin.meta import TableMeta
+from fastapi_crud_admin.utils.auth import get_session
 from fastapi_crud_admin.utils.interceptor import api_interceptor
 from fastapi_crud_admin.utils.pagination import to_pagination
 from fastapi_crud_admin.utils.repository import Repository
@@ -30,7 +31,13 @@ class SchemaRouter(Router):
 
     @router.post('/get')
     @api_interceptor
-    async def find_rows(self, _request: Request, queries: dict, params: PaginationParams):
+    async def find_rows(
+            self,
+            _request: Request,
+            queries: dict,
+            params: PaginationParams,
+            session: str = Depends(get_session)
+    ):
         async with self.database.async_session_maker() as session:
             try:
                 table_meta = self.table_meta.table
@@ -39,13 +46,19 @@ class SchemaRouter(Router):
 
                 params = Params(page=params.page, size=params.size)
 
-                return await to_pagination(await Repository.find_all(session, self.table_meta.entity, columns_for_query, params))
+                return await to_pagination(
+                    await Repository.find_all(session, self.table_meta.entity, columns_for_query, params))
             finally:
                 await session.close()
 
     @router.post('/create')
     @api_interceptor
-    async def create_row(self, _request: Request, columns: dict):
+    async def create_row(
+            self,
+            _request: Request,
+            columns: dict,
+            session: str = Depends(get_session)
+    ):
         async with self.database.async_session_maker() as session:
             try:
                 table_meta = self.table_meta.table
@@ -62,7 +75,13 @@ class SchemaRouter(Router):
 
     @router.post('/update')
     @api_interceptor
-    async def update_row(self, _request: Request, queries: dict, columns: dict):
+    async def update_row(
+            self,
+            _request: Request,
+            queries: dict,
+            columns: dict,
+            session: str = Depends(get_session)
+    ):
         async with self.database.async_session_maker() as session:
             try:
                 table_meta = self.table_meta.table
@@ -78,7 +97,12 @@ class SchemaRouter(Router):
 
     @router.post('/delete')
     @api_interceptor
-    async def delete_row(self, _request: Request, columns: dict):
+    async def delete_row(
+            self,
+            _request: Request,
+            columns: dict,
+            session: str = Depends(get_session)
+    ):
         async with self.database.async_session_maker() as session:
             try:
                 table_meta = self.table_meta.table
