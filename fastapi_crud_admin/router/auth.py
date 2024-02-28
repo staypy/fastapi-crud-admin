@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from fastapi.responses import Response
 
 from fastapi_crud_admin.utils.auth import Authentication
 from fastapi_crud_admin.utils.router import Router
@@ -23,8 +22,4 @@ class AuthRouter(Router):
 
     @router.post('/login')
     async def login(self, req: LoginRequest):
-        session = await self.auth.login(req.username, req.password)
-
-        response = Response()
-        response.set_cookie(key="session_id", value=session)
-        return response
+        return await self.auth.login(req.username, req.password)
