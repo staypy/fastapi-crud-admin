@@ -38,7 +38,7 @@ class SchemaRouter(Router):
             params: PaginationParams,
             session: str = Depends(get_session)
     ):
-        async with self.database.async_session_maker() as session:
+        async with self.database.async_session_maker() as db_session:
             try:
                 table_meta = self.table_meta.table
                 columns_for_query = {table_meta.columns[key]: value for key, value in queries.items()
@@ -47,9 +47,9 @@ class SchemaRouter(Router):
                 params = Params(page=params.page, size=params.size)
 
                 return await to_pagination(
-                    await Repository.find_all(session, self.table_meta.entity, columns_for_query, params))
+                    await Repository.find_all(db_session, self.table_meta.entity, columns_for_query, params))
             finally:
-                await session.close()
+                await db_session.close()
 
     @router.post('/create')
     @api_interceptor
@@ -59,19 +59,19 @@ class SchemaRouter(Router):
             columns: dict,
             session: str = Depends(get_session)
     ):
-        async with self.database.async_session_maker() as session:
+        async with self.database.async_session_maker() as db_session:
             try:
                 table_meta = self.table_meta.table
                 for key, value in columns.items():
                     if table_meta.columns.get(key) is None:
                         raise Exception(f"column {key} is not exist in table {self.table_name}")
 
-                return await Repository.save(session, self.table_meta.entity, columns)
+                return await Repository.save(db_session, self.table_meta.entity, columns)
             except Exception as e:
-                await session.rollback()
+                await db_session.rollback()
                 raise e
             finally:
-                await session.close()
+                await db_session.close()
 
     @router.post('/update')
     @api_interceptor
@@ -82,18 +82,18 @@ class SchemaRouter(Router):
             columns: dict,
             session: str = Depends(get_session)
     ):
-        async with self.database.async_session_maker() as session:
+        async with self.database.async_session_maker() as db_session:
             try:
                 table_meta = self.table_meta.table
                 columns_for_query = {table_meta.columns[key]: value for key, value in queries.items()
                                      if value is not None}
 
-                await Repository.update(session, self.table_meta.entity, columns_for_query, columns)
+                await Repository.update(db_session, self.table_meta.entity, columns_for_query, columns)
             except Exception as e:
-                await session.rollback()
+                await db_session.rollback()
                 raise e
             finally:
-                await session.close()
+                await db_session.close()
 
     @router.post('/delete')
     @api_interceptor
@@ -103,15 +103,15 @@ class SchemaRouter(Router):
             columns: dict,
             session: str = Depends(get_session)
     ):
-        async with self.database.async_session_maker() as session:
+        async with self.database.async_session_maker() as db_session:
             try:
                 table_meta = self.table_meta.table
                 columns_for_query = {table_meta.columns[key]: value for key, value in columns.items()
                                      if value is not None}
 
-                await Repository.delete(session, self.table_meta.entity, columns_for_query)
+                await Repository.delete(db_session, self.table_meta.entity, columns_for_query)
             except Exception as e:
-                await session.rollback()
+                await db_session.rollback()
                 raise e
             finally:
-                await session.close()
+                await db_session.close()

@@ -14,17 +14,22 @@ class Session(auth_db.base):
     session_id = Column(String(length=255), primary_key=True, default=lambda: str(uuid4()))
 
 
+async def __get_db_session(session_id: str):
+    async with auth_db.async_session_maker() as db_session:
+        try:
+            result = await db_session.execute(select(Session).where(Session.session_id == session_id))
+            session = result.scalars().one_or_none()
+            if session is None:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="session not found")
+
+            return session
+        finally:
+            await db_session.close()
+
+
 async def get_session(session_id: str = Cookie(None)):
     try:
-        async with auth_db.async_session_maker() as db_session:
-            try:
-                session = await db_session.execute(select(Session).where(Session.session_id == session_id))
-                if session is None:
-                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="session not found")
-
-                return session
-            finally:
-                await db_session.close()
+        return await __get_db_session(session_id)
     except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="session not found")
 
