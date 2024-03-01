@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-crud-admin"
-version = "0.0.3"
+version = "0.0.4"
 description = ""
 authors = ["pingusoo <als95.dev@gmail.com>"]
 readme = "README.md"
