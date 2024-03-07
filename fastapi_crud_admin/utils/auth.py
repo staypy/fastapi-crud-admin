@@ -1,7 +1,7 @@
 from typing import Callable
 from uuid import uuid4
 
-from fastapi import Cookie, HTTPException, status
+from fastapi import HTTPException, status, Header
 from sqlalchemy import Column, String, select, insert
 
 from fastapi_crud_admin.utils.database import Database
@@ -27,7 +27,7 @@ async def __get_db_session(session_id: str):
             await db_session.close()
 
 
-async def get_session(session_id: str = Cookie(None)):
+async def get_session(session_id: str = Header(None)):
     try:
         return await __get_db_session(session_id)
     except Exception:
@@ -63,5 +63,5 @@ class Authentication:
 
     def verify_password(self, password: str):
         if self.password_verifier is not None:
-            return self.password_verifier(password, self.password)
-        return password == self.password
+            return self.password_verifier(self.password, password)
+        return self.password == password

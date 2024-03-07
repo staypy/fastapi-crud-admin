@@ -1,5 +1,6 @@
 import asyncio
 
+import bcrypt
 import nest_asyncio
 import uvicorn
 from fastapi import FastAPI
@@ -43,13 +44,13 @@ def password_verifier(src: str, dest: str) -> bool:
     Custom password verifier.
 
     Parameters:
-    - src (str): Source password.
-    - dest (str): Destination password.
+    - src (str): Stored password.
+    - dest (str): Password to input when sign-in.
 
     Returns:
     - bool: True if the passwords match, False otherwise.
     """
-    return src == dest
+    return bcrypt.checkpw(dest.encode('utf-8'), src.encode('utf-8'))
 
 
 def create_app() -> FastAPI:
@@ -64,7 +65,11 @@ def create_app() -> FastAPI:
     admin.register_schema_meta(models=[Example, Test])
     admin.register_interceptor(table_name="tb_example", before_handler=before_handler, after_handler=after_handler)
     admin.register_schema_router()
-    admin.register_authentication(user_name="admin", password="admin", password_verifier=password_verifier)
+    admin.register_authentication(
+        user_name="admin",
+        password=bcrypt.hashpw("admin".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+        password_verifier=password_verifier
+    )
 
     return _app
 

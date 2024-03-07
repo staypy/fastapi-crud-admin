@@ -19,6 +19,7 @@ pytest = "^7.4.4"
 uvicorn = "^0.25.0"
 asyncio = "^3.4.3"
 greenlet = "^3.0.3"
+bcrypt = "^4.1.2"
 nest-asyncio = "^1.5.8"
 
 [tool.taskipy.tasks]
