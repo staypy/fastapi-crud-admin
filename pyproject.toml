@@ -23,7 +23,7 @@ nest-asyncio = "^1.5.8"
 
 [tool.taskipy.tasks]
 test = "python3 -m pytest test"
-test_app = "uvicorn test.main:app --reload"
+test_app = "uvicorn test.example.main:app --reload"
 
 [build-system]
 requires = ["poetry-core"]
